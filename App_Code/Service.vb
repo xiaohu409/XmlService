@@ -185,4 +185,9 @@ Imports System.Data.SqlClient
     Public Function CxCkJsr() As String
         Return db.CxCkJsr()
     End Function
+
+    <WebMethod(Description:="³ö¿âÒ©¼àÂëÌí¼Ó")> _
+    Public Function ADZHW_CK_JGMADD(ByVal yjm As String, ByVal ckxh As Integer, ByVal czy As String) As String
+        Return db.CkYjmAdd(yjm, ckxh, czy)
+    End Function
 End Class

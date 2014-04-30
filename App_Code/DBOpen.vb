@@ -741,4 +741,28 @@ Public Class DBOpen
         End If
     End Function
 
+    Function CkYjmAdd(ByVal yjm As String, ByVal ckxh As Integer, ByVal czy As String) As String
+        Dim SqlYjm As New SqlParameter("@yjm", SqlDbType.VarChar)
+        SqlYjm.Value = yjm
+
+        Dim SqlCkxh As New SqlParameter("@ckxh", SqlDbType.Int)
+        SqlCkxh.Value = ckxh
+
+        Dim SqlCzy As New SqlParameter("@czy", SqlDbType.VarChar)
+        SqlCzy.Value = czy
+
+        If Conn Is Nothing Then
+            Return LOGIN_TIPS
+        Else
+            CmdSel = New SqlCommand("ADZHW_CK_JGMADD", Conn)
+            CmdSel.CommandType = CommandType.StoredProcedure
+            CmdSel.Parameters.Add(SqlYjm)
+            CmdSel.Parameters.Add(SqlCkxh)
+            CmdSel.Parameters.Add(SqlCzy)
+            Da.SelectCommand = CmdSel
+            Da.Fill(Ds, "CK_JGM")
+            Return Ds.GetXml()
+        End If
+    End Function
+
 End Class
