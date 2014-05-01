@@ -3,7 +3,15 @@ Imports System.Data
 Imports System.Data.SqlClient
 Public Class DBOpen
 
-    Shared StrCon As String '必须定义为Shared 这是一个全局变量 供其他方法访问
+    Private DataSource As String
+
+    Private InitialCatalog As String
+
+    Private UserId As String
+
+    Private Password As String
+
+    Dim StrCon As String
 
     Shared Conn As SqlConnection
 
@@ -22,9 +30,35 @@ Public Class DBOpen
 
     Private Const LOGIN_TIPS As String = "没有登录，请登录"
 
+    Function InitStrCon() As String
+        DataSource = "Data Source=" & ConfigurationManager.AppSettings("DataSource")
+        InitialCatalog = "Initial Catalog=" & ConfigurationManager.AppSettings("InitialCatalog")
+        UserId = "User Id=" & ConfigurationManager.AppSettings("UserId")
+        Password = "Password=" & ConfigurationManager.AppSettings("Password")
+        StrCon = DataSource & ";" & InitialCatalog & ";" & UserId & ";" & Password
+        Return StrCon
+    End Function
+
+    Function ScZc(ByVal mac As String, ByVal zcm As String) As Integer
+        Conn = New SqlConnection(InitStrCon())
+        Conn.Open()
+        CmdLog = New SqlCommand("insert into SC_M(地址,注册码)values('" & mac & "','" & zcm & "')", Conn)
+        Return CmdLog.ExecuteNonQuery()
+    End Function
+
+    Function ZcCx(ByVal mac As String) As String
+        Conn = New SqlConnection(InitStrCon())
+        CmdSel = New SqlCommand("ADZHW_ZCCX '" & mac & "'", Conn)
+        Da.SelectCommand = CmdSel
+        Da.Fill(Ds, "ZC_CX")
+        Return Ds.GetXml
+    End Function
+
     Function Login(ByVal username As String, ByVal password As String) As String
         Try
-            StrCon = "Data Source=HUTAO-PC;Initial Catalog=XJLS;User ID=" & username & ";Password=" & password
+            DataSource = "Data Source=" & ConfigurationManager.AppSettings("DataSource")
+            InitialCatalog = "Initial Catalog=" & ConfigurationManager.AppSettings("InitialCatalog")
+            StrCon = DataSource & ";" & InitialCatalog & ";User ID=" & username & ";Password=" & password
             Conn = New SqlConnection(StrCon)
             CmdLog = New SqlCommand("select * from emma where 代码='" & username & "'", Conn)
             Da.SelectCommand = CmdLog
@@ -337,25 +371,7 @@ Public Class DBOpen
         End If
     End Function
 
-    Function InitStrCon() As String
-        StrCon = "Data Source=HUTAO-PC;Initial Catalog=XJLS;User ID=" & "SYS" & ";Password=" & "123456"
-        Return StrCon
-    End Function
-
-    Function ScZc(ByVal mac As String, ByVal zcm As String) As Integer
-        Conn = New SqlConnection(InitStrCon())
-        Conn.Open()
-        CmdLog = New SqlCommand("insert into SC_M(地址,注册码)values('" & mac & "','" & zcm & "')", Conn)
-        Return CmdLog.ExecuteNonQuery()
-    End Function
-
-    Function ZcCx(ByVal mac As String) As String
-        Conn = New SqlConnection(InitStrCon())
-        CmdSel = New SqlCommand("ADZHW_ZCCX '" & mac & "'", Conn)
-        Da.SelectCommand = CmdSel
-        Da.Fill(Ds, "ZC_CX")
-        Return Ds.GetXml
-    End Function
+    
 
     Function ThCxRw(ByVal rwfs As Integer, ByVal czy As String, ByVal cxm As String) As String
         Dim sqlrwfs As New SqlParameter("@rwfs", SqlDbType.Int)

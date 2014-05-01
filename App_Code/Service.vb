@@ -10,6 +10,19 @@ Imports System.Data.SqlClient
     Public Class Service
     Inherits System.Web.Services.WebService
     Dim db As New DBOpen()
+    <WebMethod(Description:="手持注册")> _
+    Public Function SC_ZC(ByVal mac As String, ByVal zcm As String) As Boolean
+        If db.ScZc(mac, zcm) > 0 Then
+            Return True
+        Else
+            Return False
+        End If
+    End Function
+
+    <WebMethod(Description:="手持注册查询")> _
+    Public Function ZC_CX(ByVal mac As String) As String
+        Return db.ZcCx(mac)
+    End Function
 
     <WebMethod(Description:="登录数据库")> _
     Public Function Login(ByVal username As String, ByVal password As String) As Boolean
@@ -89,21 +102,6 @@ Imports System.Data.SqlClient
     <WebMethod(Description:="中转箱信息确认")> _
     Public Function ADZHW_CK_ZZXXXQR(ByVal zzxm As String, ByVal ckxh As Integer, ByVal czy As String, ByVal fhsl As Decimal) As String
         Return db.Ck_ZzxXxQr(zzxm, ckxh, czy, fhsl)
-    End Function
-
-    <WebMethod(Description:="手持注册")> _
-    Public Function SC_ZC(ByVal mac As String, ByVal zcm As String) As Boolean
-        If db.ScZc(mac, zcm) > 0 Then
-            Return True
-        Else
-            Return False
-        End If
-
-    End Function
-
-    <WebMethod(Description:="手持注册查询")> _
-    Public Function ZC_CX(ByVal mac As String) As String
-        Return db.ZcCx(mac)
     End Function
 
     <WebMethod(Description:="调货任务查询")> _
