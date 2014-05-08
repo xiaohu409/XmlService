@@ -181,11 +181,31 @@ Imports System.Data.SqlClient
 
     <WebMethod(Description:="出库经手人查询")> _
     Public Function CxCkJsr() As String
-        Return db.CxCkJsr()
+        Return db.GetCkJsr()
     End Function
 
     <WebMethod(Description:="出库药监码添加")> _
     Public Function ADZHW_CK_JGMADD(ByVal yjm As String, ByVal ckxh As Integer, ByVal czy As String) As String
         Return db.CkYjmAdd(yjm, ckxh, czy)
+    End Function
+
+    <WebMethod(Description:="品种货位查询")> _
+    Public Function ADZHW_CPHW_CX(ByVal cxm As String, ByVal czy As String) As String
+        Return db.GetCpHW(cxm, czy)
+    End Function
+
+    <WebMethod(Description:="库存品种未定货位查询")> _
+    Public Function ADZHW_KCCPMDHW_CX(ByVal cxm As String, ByVal czy As String) As String
+        Return db.GetKcCpMdHw(cxm, czy)
+    End Function
+
+    <WebMethod(Description:="出库任务状态查询")> _
+    Public Function ADZHW_CK_RW_SD_CX(ByVal ph As String) As String
+        Return db.GetCkRwSate(ph)
+    End Function
+
+    <WebMethod(Description:="出库任务锁定")> _
+    Public Function ADZHW_CK_RW_SD(ByVal ph As String) As String
+        Return db.SetCkRwState(ph)
     End Function
 End Class
