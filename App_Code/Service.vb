@@ -70,8 +70,8 @@ Imports System.Data.SqlClient
     End Function
 
     <WebMethod(Description:="出库取任务")> _
-    Public Function ADZHW_CK_QRW(ByVal rwfs As Integer, ByVal czy As String, ByVal ckph As String) As String
-        Return db.CkQrw(rwfs, czy, ckph)
+    Public Function ADZHW_CK_QRW(ByVal czy As String, ByVal ckph As String) As String
+        Return db.CkQrw(czy, ckph)
     End Function
 
     <WebMethod(Description:="中转箱状态")> _
@@ -91,7 +91,7 @@ Imports System.Data.SqlClient
 
     <WebMethod(Description:="中转箱设置")> _
     Public Function ADZHW_ZZX_SET(ByVal czy As String, ByVal ct As String) As String
-        Return db.GetZzxSet(czy, ct)
+        Return db.GetZzxSet(czy)
     End Function
 
     <WebMethod(Description:="中转箱数量")> _
@@ -197,15 +197,5 @@ Imports System.Data.SqlClient
     <WebMethod(Description:="库存品种未定货位查询")> _
     Public Function ADZHW_KCCPMDHW_CX(ByVal cxm As String, ByVal czy As String) As String
         Return db.GetKcCpMdHw(cxm, czy)
-    End Function
-
-    <WebMethod(Description:="出库任务状态查询")> _
-    Public Function ADZHW_CK_RW_SD_CX(ByVal ph As String) As String
-        Return db.GetCkRwSate(ph)
-    End Function
-
-    <WebMethod(Description:="出库任务锁定")> _
-    Public Function ADZHW_CK_RW_SD(ByVal ph As String) As String
-        Return db.SetCkRwState(ph)
     End Function
 End Class

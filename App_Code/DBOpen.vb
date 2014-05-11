@@ -203,10 +203,7 @@ Public Class DBOpen
         End If
     End Function
 
-    Function CkQrw(ByVal rwfs As Integer, ByVal czy As String, ByVal ckph As String) As String
-
-        Dim SqlRwfs As New SqlParameter("@rwfs", SqlDbType.Int)
-        SqlRwfs.Value = rwfs
+    Function CkQrw(ByVal czy As String, ByVal ckph As String) As String
 
         Dim SqlCzy As New SqlParameter("@czy", SqlDbType.VarChar)
         SqlCzy.Value = czy
@@ -219,7 +216,6 @@ Public Class DBOpen
         Else
             CmdSel = New SqlCommand("ADZHW_CK_QRW", Conn)
             CmdSel.CommandType = CommandType.StoredProcedure
-            CmdSel.Parameters.Add(SqlRwfs)
             CmdSel.Parameters.Add(SqlCzy)
             CmdSel.Parameters.Add(SqlCkph)
             Da.SelectCommand = CmdSel
@@ -300,13 +296,10 @@ Public Class DBOpen
         End If
     End Function
 
-    Function GetZzxSet(ByVal czy As String, ByVal ct As String) As String
+    Function GetZzxSet(ByVal czy As String) As String
 
         Dim SqlCzy As New SqlParameter("@czy", SqlDbType.VarChar)
         SqlCzy.Value = czy
-
-        Dim SqlCt As New SqlParameter("@ct", SqlDbType.VarChar)
-        SqlCt.Value = ct
 
         If Conn Is Nothing Then
             Return LOGIN_TIPS
@@ -314,7 +307,6 @@ Public Class DBOpen
             CmdSel = New SqlCommand("ADZHW_ZZX_SET", Conn)
             CmdSel.CommandType = CommandType.StoredProcedure
             CmdSel.Parameters.Add(SqlCzy)
-            CmdSel.Parameters.Add(SqlCt)
             Da.SelectCommand = CmdSel
             Da.Fill(Ds, "ZZX_SET")
             Return Ds.GetXml
@@ -817,38 +809,6 @@ Public Class DBOpen
             CmdSel.Parameters.Add(SqlCzy)
             Da.SelectCommand = CmdSel
             Da.Fill(Ds, "KCCPMDHW")
-            Return Ds.GetXml()
-        End If
-    End Function
-
-    Function GetCkRwSate(ByVal ph As String) As String
-        Dim SqlPh As New SqlParameter("@ph", SqlDbType.VarChar)
-        SqlPh.Value = ph
-
-        If Conn Is Nothing Then
-            Return LOGIN_TIPS
-        Else
-            CmdSel = New SqlCommand("ADZHW_CK_RW_SD_CX", Conn)
-            CmdSel.CommandType = CommandType.StoredProcedure
-            CmdSel.Parameters.Add(SqlPh)
-            Da.SelectCommand = CmdSel
-            Da.Fill(Ds, "CKRWZT")
-            Return Ds.GetXml()
-        End If
-    End Function
-
-    Function SetCkRwState(ByVal ph As String) As String
-        Dim SqlPh As New SqlParameter("@ph", SqlDbType.VarChar)
-        SqlPh.Value = ph
-
-        If Conn Is Nothing Then
-            Return LOGIN_TIPS
-        Else
-            CmdSel = New SqlCommand("ADZHW_CK_RW_SD", Conn)
-            CmdSel.CommandType = CommandType.StoredProcedure
-            CmdSel.Parameters.Add(SqlPh)
-            Da.SelectCommand = CmdSel
-            Da.Fill(Ds, "CKRWZT")
             Return Ds.GetXml()
         End If
     End Function
