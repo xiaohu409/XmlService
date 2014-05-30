@@ -10,6 +10,10 @@ Imports System.Data.SqlClient
     Public Class Service
     Inherits System.Web.Services.WebService
     Dim db As New DBOpen()
+    <WebMethod(Description:="测试服务器是否可以连接")> _
+    Public Function IsConnected() As Boolean
+        Return db.IsConnected()
+    End Function
     <WebMethod(Description:="手持注册")> _
     Public Function SC_ZC(ByVal mac As String, ByVal zcm As String) As Boolean
         If db.ScZc(mac, zcm) > 0 Then
@@ -27,7 +31,8 @@ Imports System.Data.SqlClient
     <WebMethod(Description:="登录数据库")> _
     Public Function Login(ByVal username As String, ByVal password As String) As Boolean
         'vb.net 在判断字符串是否相等时 是区分大小写 sys<>SYS
-        If db.login(username, password).Trim().Equals(username) Then
+        'Return db.Login(username, password)
+        If db.Login(username, password).Trim().Equals(username) Then
             Return True
         Else
             Return False
@@ -60,8 +65,8 @@ Imports System.Data.SqlClient
     End Function
 
     <WebMethod(Description:="入库国家药监码添加")> _
-    Public Function ADZHW_RK_JGMADD(ByVal rkxh As Integer, ByVal jgm As String, ByVal czy As String) As String
-        Return db.RkJgmTj(rkxh, jgm, czy)
+    Public Function ADZHW_RK_JGMADD(ByVal jgm As String, ByVal rkxh As Integer, ByVal czy As String) As String
+        Return db.RkJgmTj(jgm, rkxh, czy)
     End Function
 
     <WebMethod(Description:="出库查询任务")> _
@@ -197,5 +202,35 @@ Imports System.Data.SqlClient
     <WebMethod(Description:="库存品种未定货位查询")> _
     Public Function ADZHW_KCCPMDHW_CX(ByVal cxm As String, ByVal czy As String) As String
         Return db.GetKcCpMdHw(cxm, czy)
+    End Function
+
+    <WebMethod(Description:="出库欠货查询")> _
+    Public Function ADZHW_CKQH_CX(ByVal cxm As String, ByVal czy As String) As String
+        Return db.getCkQh(cxm, czy)
+    End Function
+
+    <WebMethod(Description:="出库欠货产品信息")> _
+    Public Function ADZHW_CKQH_CP(ByVal ckph As String, ByVal czy As String) As String
+        Return db.getCkQhQrw(ckph, czy)
+    End Function
+
+    <WebMethod(Description:="出库欠货产品信息详情")> _
+    Public Function ADZHW_CKQH_CPXX(ByVal ckph As String, ByVal ckxh As Integer, ByVal czy As String) As String
+        Return db.getCkQhCpXx(ckph, ckxh, czy)
+    End Function
+
+    <WebMethod(Description:="出库欠货还货确认")> _
+    Public Function ADZHW_CKQHHH_QR(ByVal ckxh As Integer, ByVal hhsl As Decimal, ByVal czy As String) As String
+        Return db.setCkQhHh(ckxh, hhsl, czy)
+    End Function
+
+    <WebMethod(Description:="出库拼箱码查询")> _
+    Public Function ADZHW_CK_PXM_CX(ByVal jsr As String) As String
+        Return db.getCkPxm(jsr)
+    End Function
+
+    <WebMethod(Description:="货位产品查询")> _
+    Public Function ADZHW_HW_PZ_CX(ByVal dztm As String) As String
+        Return db.getHwCpCx(dztm)
     End Function
 End Class

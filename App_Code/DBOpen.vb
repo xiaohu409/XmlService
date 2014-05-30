@@ -38,6 +38,9 @@ Public Class DBOpen
         StrCon = DataSource & ";" & InitialCatalog & ";" & UserId & ";" & Password
         Return StrCon
     End Function
+    Function IsConnected() As Boolean
+        Return True
+    End Function
 
     Function ScZc(ByVal mac As String, ByVal zcm As String) As Integer
         Conn = New SqlConnection(InitStrCon())
@@ -56,14 +59,14 @@ Public Class DBOpen
 
     Function Login(ByVal username As String, ByVal password As String) As String
         Try
-            DataSource = "Data Source=" & ConfigurationManager.AppSettings("DataSource")
-            InitialCatalog = "Initial Catalog=" & ConfigurationManager.AppSettings("InitialCatalog")
-            StrCon = DataSource & ";" & InitialCatalog & ";User ID=" & username & ";Password=" & password
-            Conn = New SqlConnection(StrCon)
-            CmdLog = New SqlCommand("select * from emma where 代码='" & username & "'", Conn)
+            'DataSource = "Data Source=" & ConfigurationManager.AppSettings("DataSource")
+            'InitialCatalog = "Initial Catalog=" & ConfigurationManager.AppSettings("InitialCatalog")
+            'StrCon = DataSource & ";" & InitialCatalog & ";User ID=" & username & ";Password=" & password
+            Conn = New SqlConnection(InitStrCon())
+            CmdLog = New SqlCommand("select * from adakc_hw_czy where 人员代码='" & username & "' and isnull(密码,'')='" & password & "'", Conn)
             Da.SelectCommand = CmdLog
             Da.Fill(Ds, "login_info")
-            Return Ds.Tables(0).Rows.Item(0).Item(0)
+            Return Ds.Tables(0).Rows.Item(0).Item(1)
         Catch exc As Exception
             Return exc.Message
         End Try
@@ -82,7 +85,7 @@ Public Class DBOpen
             CmdSel.Parameters.Add(SqlCzy)
             Da.SelectCommand = CmdSel
             Da.Fill(Ds, "KFZH")
-            Return Ds.GetXml()
+            Return "<KFZH>" + vbCrLf + "<KF>" + Ds.Tables(0).Rows.Item(0).Item(0) + "</KF>" + vbCrLf + "<ZH>" + Ds.Tables(0).Rows.Item(0).Item(1) + "</ZH>" + vbCrLf + "</KFZH>"
         End If
     End Function
 
@@ -153,13 +156,14 @@ Public Class DBOpen
         End If
     End Function
 
-    Function RkJgmTj(ByVal rkxh As Integer, ByVal jgm As String, ByVal czy As String) As String
+    Function RkJgmTj(ByVal jgm As String, ByVal rkxh As Integer, ByVal czy As String) As String
 
-        Dim SqlRkxh As New SqlParameter("@rkxh", SqlDbType.Int)
-        SqlRkxh.Value = rkxh
 
         Dim SqlJgm As New SqlParameter("@yjm", SqlDbType.VarChar)
         SqlJgm.Value = jgm
+
+        Dim SqlRkxh As New SqlParameter("@rkxh", SqlDbType.Int)
+        SqlRkxh.Value = rkxh
 
         Dim SqlCzy As New SqlParameter("@czy", SqlDbType.VarChar)
         SqlCzy.Value = czy
@@ -169,8 +173,8 @@ Public Class DBOpen
         Else
             CmdSel = New SqlCommand("ADZHW_RK_JGMADD", Conn)
             CmdSel.CommandType = CommandType.StoredProcedure
-            CmdSel.Parameters.Add(SqlRkxh)
             CmdSel.Parameters.Add(SqlJgm)
+            CmdSel.Parameters.Add(SqlRkxh)
             CmdSel.Parameters.Add(SqlCzy)
             Da.SelectCommand = CmdSel
             Da.Fill(Ds, "RK_JGM")
@@ -813,4 +817,123 @@ Public Class DBOpen
         End If
     End Function
 
+    Function getCkQh(ByVal cxm As String, ByVal czy As String) As String
+        Dim SqlCxm As New SqlParameter("@cxm", SqlDbType.VarChar)
+        SqlCxm.Value = cxm
+
+        Dim SqlCzy As New SqlParameter("@czy", SqlDbType.VarChar)
+        SqlCzy.Value = czy
+
+        If Conn Is Nothing Then
+            Return LOGIN_TIPS
+        Else
+            CmdSel = New SqlCommand("ADZHW_CKQH_CX", Conn)
+            CmdSel.CommandType = CommandType.StoredProcedure
+            CmdSel.Parameters.Add(SqlCxm)
+            CmdSel.Parameters.Add(SqlCzy)
+            Da.SelectCommand = CmdSel
+            Da.Fill(Ds, "CKQHHQ")
+            Return Ds.GetXml()
+        End If
+    End Function
+
+    Function getCkQhQrw(ByVal ckph As String, ByVal czy As String) As String
+        Dim SqlCkPh As New SqlParameter("@ckph", SqlDbType.VarChar)
+        SqlCkPh.Value = ckph
+
+        Dim SqlCzy As New SqlParameter("@czy", SqlDbType.VarChar)
+        SqlCzy.Value = czy
+
+        If Conn Is Nothing Then
+            Return LOGIN_TIPS
+        Else
+            CmdSel = New SqlCommand("ADZHW_CKQH_CP", Conn)
+            CmdSel.CommandType = CommandType.StoredProcedure
+            CmdSel.Parameters.Add(SqlCkPh)
+            CmdSel.Parameters.Add(SqlCzy)
+            Da.SelectCommand = CmdSel
+            Da.Fill(Ds, "CKQHQRW")
+            Return Ds.GetXml()
+        End If
+    End Function
+
+    Function getCkQhCpXx(ByVal ckph As String, ByVal ckxh As Integer, ByVal czy As String) As String
+        Dim SqlCkph As New SqlParameter("@ckph", SqlDbType.VarChar)
+        SqlCkph.Value = ckph
+
+        Dim SqlCkxh As New SqlParameter("@ckxh", SqlDbType.Int)
+        SqlCkxh.Value = ckxh
+
+        Dim SqlCzy As New SqlParameter("@czy", SqlDbType.VarChar)
+        SqlCzy.Value = czy
+
+        If Conn Is Nothing Then
+            Return LOGIN_TIPS
+        Else
+            CmdSel = New SqlCommand("ADZHW_CKQH_CPXX", Conn)
+            CmdSel.CommandType = CommandType.StoredProcedure
+            CmdSel.Parameters.Add(SqlCkph)
+            CmdSel.Parameters.Add(SqlCkxh)
+            CmdSel.Parameters.Add(SqlCzy)
+            Da.SelectCommand = CmdSel
+            Da.Fill(Ds, "CKQHCPXX")
+            Return Ds.GetXml()
+        End If
+    End Function
+
+    Function setCkQhHh(ByVal ckxh As Integer, ByVal hhsl As Decimal, ByVal czy As String) As String
+        Dim SqlCkxh As New SqlParameter("@ckxh", SqlDbType.Int)
+        SqlCkxh.Value = ckxh
+
+        Dim SqlHhsl As New SqlParameter("@hhsl", SqlDbType.Decimal)
+        SqlHhsl.Value = hhsl
+
+        Dim SqlCzy As New SqlParameter("@czy", SqlDbType.VarChar)
+        SqlCzy.Value = czy
+
+        If Conn Is Nothing Then
+            Return LOGIN_TIPS
+        Else
+            CmdSel = New SqlCommand("ADZHW_CKQHHH_QR", Conn)
+            CmdSel.CommandType = CommandType.StoredProcedure
+            CmdSel.Parameters.Add(SqlCkxh)
+            CmdSel.Parameters.Add(SqlHhsl)
+            CmdSel.Parameters.Add(SqlCzy)
+            Da.SelectCommand = CmdSel
+            Da.Fill(Ds, "CKQHHHQR")
+            Return Ds.GetXml()
+        End If
+    End Function
+
+    Function getCkPxm(ByVal jsr As String) As String
+        Dim SqlJsr As New SqlParameter("@jsr", SqlDbType.VarChar)
+        SqlJsr.Value = jsr
+
+        If Conn Is Nothing Then
+            Return LOGIN_TIPS
+        Else
+            CmdSel = New SqlCommand("ADZHW_CK_PXM_CX", Conn)
+            CmdSel.CommandType = CommandType.StoredProcedure
+            CmdSel.Parameters.Add(SqlJsr)
+            Da.SelectCommand = CmdSel
+            Da.Fill(Ds, "CKPXMCX")
+            Return Ds.GetXml()
+        End If
+    End Function
+
+    Function getHwCpCx(ByVal dztm As String) As String
+        Dim SqlDztm As New SqlParameter("@dztm", SqlDbType.VarChar)
+        SqlDztm.Value = dztm
+
+        If Conn Is Nothing Then
+            Return LOGIN_TIPS
+        Else
+            CmdSel = New SqlCommand("ADZHW_HW_PZ_CX", Conn)
+            CmdSel.CommandType = CommandType.StoredProcedure
+            CmdSel.Parameters.Add(SqlDztm)
+            Da.SelectCommand = CmdSel
+            Da.Fill(Ds, "HWPZ")
+            Return Ds.GetXml()
+        End If
+    End Function
 End Class
